@@ -70,16 +70,21 @@ public class MyGame extends Canvas implements MouseListener,ComponentListener,Ch
 	//ASCOLTATORI
 	@Override
 	public void mouseClicked(MouseEvent e) {
-		if(matriceElementi==null){
-			return;
+		if(e.getSource() == this){
+			if(matriceElementi==null){
+				return;
+			}
+			try{
+				matriceElementi[e.getX()/dimension][e.getY()/dimension] = !matriceElementi[e.getX()/dimension][e.getY()/dimension];
+			}
+			catch(ArrayIndexOutOfBoundsException error){
+				
+			}
+			paintMatrix();
 		}
-		try{
-			matriceElementi[e.getX()/dimension][e.getY()/dimension] = true;
-		}
-		catch(ArrayIndexOutOfBoundsException error){
+		else{
 			
 		}
-		paintMatrix();
 	}
 
 	@Override

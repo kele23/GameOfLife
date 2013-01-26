@@ -1,14 +1,23 @@
 package it.univr.GameOfLife;
 
+import java.awt.BorderLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.GridLayout;
 
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JSlider;
 
 public class Interfaccia extends JFrame {
 	
 	private MyGame myGame;
+	
+	private static final String[] imgs = {"block.png","boat.png","glider.gif","loaf.png","blinker.gif",
+		"beehive.png","beacon.gif","pulsar.gif","toad.gif","lwss.gif"};
 	
 	public static void main(String args[]){
 		new Interfaccia();
@@ -16,9 +25,9 @@ public class Interfaccia extends JFrame {
 	
 	public Interfaccia(){
 		this.setDefaultCloseOperation(this.EXIT_ON_CLOSE);
-		this.setBounds(100,100,600,500);
+		this.setBounds(100,100,800,600);
 		
-		this.getContentPane().setLayout(new GridBagLayout());
+		this.getContentPane().setLayout(new BorderLayout());
 		
 		myGame = new MyGame(8,1000);
 		
@@ -26,21 +35,19 @@ public class Interfaccia extends JFrame {
 		slider.addChangeListener(myGame);
 		slider.setValue(1000);
 		
-		GridBagConstraints c = new GridBagConstraints();
+		JButton buttons[] = new JButton[10];
 		
-		c.fill = GridBagConstraints.BOTH;
-		c.weightx = 1;
-		c.weighty = 0.9;
-		c.gridx = 0;
-		c.gridy = 0;
-		this.getContentPane().add(myGame, c);
+		JPanel panelButtons = new JPanel(new GridLayout(5,2));
+		for(int I=0;I<10;I++){
+			buttons[I] = new JButton(new ImageIcon("GameOfLife/img/"+imgs[I]));
+			panelButtons.add(buttons[I]);
+		}
 		
-		c.fill = GridBagConstraints.BOTH;
-		c.weightx = 1;
-		c.weighty = 0.1;
-		c.gridx = 0;
-		c.gridy = 1;
-		this.getContentPane().add(slider,c);
+		JScrollPane scrollPane = new JScrollPane(panelButtons);
+		
+		this.getContentPane().add(myGame, BorderLayout.CENTER);
+		this.getContentPane().add(slider, BorderLayout.SOUTH);
+		this.getContentPane().add(scrollPane, BorderLayout.EAST);
 		
 		this.setVisible(true);
 	}
