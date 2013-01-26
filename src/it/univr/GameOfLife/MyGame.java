@@ -9,7 +9,11 @@ import java.awt.event.ComponentListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
-public class MyGame extends Canvas implements MouseListener,ComponentListener{
+import javax.swing.JSlider;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+
+public class MyGame extends Canvas implements MouseListener,ComponentListener,ChangeListener{
 
 	//OGGETTO PER LA SINCRONIZZAZIONE TRA LE THREAD
 	private Object obj = new Object();
@@ -40,11 +44,18 @@ public class MyGame extends Canvas implements MouseListener,ComponentListener{
 		new NextStateKingThread(2).start();
 	}
 	
+	/**
+	 * Funzione richiamata al ridisegno del Canvas
+	 */
 	@Override
 	public void paint(Graphics g){
 		g.drawImage(image,0,0,this);
 	}
 	
+	/**
+	 * Update funzione che viene richiamata al ridisegno, prima del Paint
+	 * Reimplementata per migliorare il double buffering.
+	 */
 	@Override
 	public void update(Graphics g){
 		if(image==null){
@@ -54,6 +65,9 @@ public class MyGame extends Canvas implements MouseListener,ComponentListener{
 		paint(g);
 	}
 
+	
+	
+	//ASCOLTATORI
 	@Override
 	public void mouseClicked(MouseEvent e) {
 		if(matriceElementi==null){
@@ -103,6 +117,14 @@ public class MyGame extends Canvas implements MouseListener,ComponentListener{
 		// TODO Auto-generated method stub
 		
 	}
+	
+	@Override
+	public void stateChanged(ChangeEvent arg0) {
+		JSlider sli = (JSlider) arg0.getSource();
+		attesa = sli.getValue()/100;
+	}
+	//FINE ASCOLTATORI
+	
 	
 	/**
 	 * Disegna le matrici delle cellule nel buffer
@@ -230,7 +252,9 @@ public class MyGame extends Canvas implements MouseListener,ComponentListener{
 				}
 				
 				try{
-					sleep(attesa);
+					for(int I=0;I<100;I++){
+						sleep(attesa);
+					}
 				}catch(InterruptedException e){
 					
 				}
@@ -240,6 +264,7 @@ public class MyGame extends Canvas implements MouseListener,ComponentListener{
 			
 		}
 		 
+		
 		private class NextStateSlaveThread extends Thread{
 			
 			int riga;
