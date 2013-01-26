@@ -1,12 +1,8 @@
 package it.univr.GameOfLife;
 
 import java.awt.BorderLayout;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -16,8 +12,7 @@ public class Interfaccia extends JFrame {
 	
 	private MyGame myGame;
 	
-	private static final String[] imgs = {"block.png","boat.png","glider.gif","loaf.png","blinker.gif",
-		"beehive.png","beacon.gif","pulsar.gif","toad.gif","lwss.gif"};
+	
 	
 	public static void main(String args[]){
 		new Interfaccia();
@@ -35,11 +30,13 @@ public class Interfaccia extends JFrame {
 		slider.addChangeListener(myGame);
 		slider.setValue(1000);
 		
-		JButton buttons[] = new JButton[10];
-		
 		JPanel panelButtons = new JPanel(new GridLayout(5,2));
+		
+		
+		MyButton buttons[] = new MyButton[10];
 		for(int I=0;I<10;I++){
-			buttons[I] = new JButton(new ImageIcon("GameOfLife/img/"+imgs[I]));
+			buttons[I] = new MyButton(I);
+			buttons[I].addMouseListener(myGame);
 			panelButtons.add(buttons[I]);
 		}
 		

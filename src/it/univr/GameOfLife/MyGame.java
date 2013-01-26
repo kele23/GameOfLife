@@ -28,7 +28,9 @@ public class MyGame extends Canvas implements MouseListener,ComponentListener,Ch
 	private Image image;
 	
 	//ATTESA , TEMPO DI ATTESA TRA UN AGGIORNAMENTO E L'ALTRO (ms)
-	private int attesa;
+	private Integer attesa;
+	
+	private PrObject prObject = null;
 	
 	/**
 	 * Costruttore del gioco
@@ -63,9 +65,7 @@ public class MyGame extends Canvas implements MouseListener,ComponentListener,Ch
 			bufferedGraphics = image.getGraphics();
 		}
 		paint(g);
-	}
-
-	
+	}	
 	
 	//ASCOLTATORI
 	@Override
@@ -74,16 +74,22 @@ public class MyGame extends Canvas implements MouseListener,ComponentListener,Ch
 			if(matriceElementi==null){
 				return;
 			}
-			try{
-				matriceElementi[e.getX()/dimension][e.getY()/dimension] = !matriceElementi[e.getX()/dimension][e.getY()/dimension];
+			if(prObject==null){
+				try{
+					matriceElementi[e.getX()/dimension][e.getY()/dimension] = !matriceElementi[e.getX()/dimension][e.getY()/dimension];
+				}
+				catch(ArrayIndexOutOfBoundsException error){
+					
+				}
 			}
-			catch(ArrayIndexOutOfBoundsException error){
-				
+			else{
+				prObject.modify(e.getX()/dimension, e.getY()/dimension, matriceElementi);
+				prObject = null;
 			}
 			paintMatrix();
 		}
 		else{
-			
+			prObject = ((MyButton) e.getSource()).getPrObject();
 		}
 	}
 
@@ -126,7 +132,9 @@ public class MyGame extends Canvas implements MouseListener,ComponentListener,Ch
 	@Override
 	public void stateChanged(ChangeEvent arg0) {
 		JSlider sli = (JSlider) arg0.getSource();
-		attesa = sli.getValue()/100;
+		synchronized(attesa){
+			attesa = sli.getValue()/100;
+		}
 	}
 	//FINE ASCOLTATORI
 	
@@ -257,8 +265,12 @@ public class MyGame extends Canvas implements MouseListener,ComponentListener,Ch
 				}
 				
 				try{
+					int att;
 					for(int I=0;I<100;I++){
-						sleep(attesa);
+						synchronized(attesa){
+							att=attesa;
+						}
+						sleep(att);
 					}
 				}catch(InterruptedException e){
 					
