@@ -33,8 +33,8 @@ public class Interfaccia extends JFrame {
 		JPanel panelButtons = new JPanel(new GridLayout(5,2));
 		
 		
-		MyButton buttons[] = new MyButton[10];
-		for(int I=0;I<10;I++){
+		MyButton buttons[] = new MyButton[11];
+		for(int I=0;I<11;I++){
 			buttons[I] = new MyButton(I);
 			buttons[I].addMouseListener(myGame);
 			panelButtons.add(buttons[I]);
