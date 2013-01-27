@@ -76,14 +76,18 @@ public class MyGame extends Canvas implements MouseListener,ComponentListener,Ch
 			}
 			if(prObject==null){
 				try{
-					matriceElementi[e.getX()/dimension][e.getY()/dimension] = !matriceElementi[e.getX()/dimension][e.getY()/dimension];
+					synchronized(obj){
+						matriceElementi[e.getX()/dimension][e.getY()/dimension] = !matriceElementi[e.getX()/dimension][e.getY()/dimension];
+					}
 				}
 				catch(ArrayIndexOutOfBoundsException error){
 					
 				}
 			}
 			else{
-				prObject.modify(e.getX()/dimension, e.getY()/dimension, matriceElementi);
+				synchronized(obj){
+					prObject.modify(e.getX()/dimension, e.getY()/dimension, matriceElementi);
+				}
 				prObject = null;
 			}
 			paintMatrix();
@@ -132,8 +136,18 @@ public class MyGame extends Canvas implements MouseListener,ComponentListener,Ch
 	@Override
 	public void stateChanged(ChangeEvent arg0) {
 		JSlider sli = (JSlider) arg0.getSource();
-		synchronized(attesa){
-			attesa = sli.getValue()/100;
+		if(sli.getMaximum() < 100){  //SLIDER DELLA DIMENSIONE
+			synchronized(obj){
+				if(matriceElementi!=null){
+					dimension = sli.getValue();
+					resizeMatrix();
+				}
+			}
+		}
+		else{  //SLIDER DELLA VELOCITA
+			synchronized(attesa){
+				attesa = sli.getValue();
+			}
 		}
 	}
 	//FINE ASCOLTATORI
@@ -142,7 +156,7 @@ public class MyGame extends Canvas implements MouseListener,ComponentListener,Ch
 	/**
 	 * Disegna le matrici delle cellule nel buffer
 	 */
-	private void paintMatrix(){
+	private synchronized void paintMatrix(){
 		for(int I=0;I<matriceElementi.length;I++){
 			for(int J=0;J<matriceElementi[I].length;J++){
 				if(matriceElementi[I][J]){
@@ -159,17 +173,20 @@ public class MyGame extends Canvas implements MouseListener,ComponentListener,Ch
 	
 	@Override
 	public void componentResized(ComponentEvent e) {
-		image = createImage(this.getWidth(),this.getHeight());
-		bufferedGraphics = image.getGraphics();
-		
 		synchronized(obj){
-			boolean[][] temp = matriceElementi;
-			matriceElementi = new boolean[this.getWidth()/dimension][this.getHeight()/dimension];
-			if(temp!=null){
-				int minLung = (  temp[0].length < matriceElementi[0].length ? temp[0].length : matriceElementi[0].length );
-				for(int I=0;I< (  temp.length < matriceElementi.length ? temp.length : matriceElementi.length ) ; I++){
-					System.arraycopy(temp[I],0, matriceElementi[I], 0, minLung);
-				}
+			image = createImage(this.getWidth(),this.getHeight());
+			bufferedGraphics = image.getGraphics();
+			resizeMatrix();
+		}
+	}
+	
+	private void resizeMatrix(){
+		boolean[][] temp = matriceElementi;
+		matriceElementi = new boolean[this.getWidth()/dimension][this.getHeight()/dimension];
+		if(temp!=null){
+			int minLung = (  temp[0].length < matriceElementi[0].length ? temp[0].length : matriceElementi[0].length );
+			for(int I=0;I< (  temp.length < matriceElementi.length ? temp.length : matriceElementi.length ) ; I++){
+				System.arraycopy(temp[I],0, matriceElementi[I], 0, minLung);
 			}
 		}
 		paintMatrix();
@@ -196,7 +213,7 @@ public class MyGame extends Canvas implements MouseListener,ComponentListener,Ch
 				}
 				
 				try{
-					sleep(50);
+					sleep(15);
 				}catch(InterruptedException e){
 					
 				}
@@ -265,12 +282,17 @@ public class MyGame extends Canvas implements MouseListener,ComponentListener,Ch
 				}
 				
 				try{
-					int att;
-					for(int I=0;I<100;I++){
+					int att = 0;
+					int finish = 0;
+					synchronized(attesa){
+						finish = attesa;
+					}
+					while(att < finish/2){
+						sleep(2);
 						synchronized(attesa){
-							att=attesa;
+							finish = attesa;
 						}
-						sleep(att);
+						att+=2;
 					}
 				}catch(InterruptedException e){
 					

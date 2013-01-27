@@ -24,17 +24,21 @@ public class Interfaccia extends JFrame {
 		
 		this.getContentPane().setLayout(new BorderLayout());
 		
-		myGame = new MyGame(8,1000);
+		myGame = new MyGame(6,500);
 		
-		JSlider slider = new JSlider(100,10000);
-		slider.addChangeListener(myGame);
-		slider.setValue(1000);
+		JSlider sliderV = new JSlider(20,1000);
+		sliderV.addChangeListener(myGame);
+		sliderV.setValue(500);
 		
-		JPanel panelButtons = new JPanel(new GridLayout(5,2));
+		JSlider sliderG = new JSlider(3,20);
+		sliderG.addChangeListener(myGame);
+		sliderG.setValue(6);
+		
+		JPanel panelButtons = new JPanel(new GridLayout(9,2));
 		
 		
-		MyButton buttons[] = new MyButton[11];
-		for(int I=0;I<11;I++){
+		MyButton buttons[] = new MyButton[MyButton.imgs.length];
+		for(int I=0;I<MyButton.imgs.length;I++){
 			buttons[I] = new MyButton(I);
 			buttons[I].addMouseListener(myGame);
 			panelButtons.add(buttons[I]);
@@ -43,8 +47,9 @@ public class Interfaccia extends JFrame {
 		JScrollPane scrollPane = new JScrollPane(panelButtons);
 		
 		this.getContentPane().add(myGame, BorderLayout.CENTER);
-		this.getContentPane().add(slider, BorderLayout.SOUTH);
+		this.getContentPane().add(sliderV, BorderLayout.SOUTH);
 		this.getContentPane().add(scrollPane, BorderLayout.EAST);
+		this.getContentPane().add(sliderG, BorderLayout.NORTH);
 		
 		this.setVisible(true);
 	}
