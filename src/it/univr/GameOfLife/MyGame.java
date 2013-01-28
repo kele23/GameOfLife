@@ -71,26 +71,24 @@ public class MyGame extends Canvas implements MouseListener,ComponentListener,Ch
 	@Override
 	public void mouseClicked(MouseEvent e) {
 		if(e.getSource() == this){
-			if(matriceElementi==null){
-				return;
-			}
-			if(prObject==null){
-				try{
-					synchronized(obj){
+			synchronized(obj){
+				if(matriceElementi==null){
+					return;
+				}
+				if(prObject==null){
+					try{
 						matriceElementi[e.getX()/dimension][e.getY()/dimension] = !matriceElementi[e.getX()/dimension][e.getY()/dimension];
 					}
+					catch(ArrayIndexOutOfBoundsException error){
+						
+					}
 				}
-				catch(ArrayIndexOutOfBoundsException error){
-					
-				}
-			}
-			else{
-				synchronized(obj){
+				else{
 					prObject.modify(e.getX()/dimension, e.getY()/dimension, matriceElementi);
+					prObject = null;
 				}
-				prObject = null;
+				paintMatrix();
 			}
-			paintMatrix();
 		}
 		else{
 			prObject = ((MyButton) e.getSource()).getPrObject();
